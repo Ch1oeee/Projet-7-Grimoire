@@ -1,6 +1,15 @@
 const express = require('express');
-
 const app = express();
+const mongoose = require('mongoose');
+
+const bookRoutes = require('./routes/book');
+const userRoutes = require('./routes/user');
+
+mongoose.connect('mongodb+srv://montaigut:rognes13840@cluster0.on8s5sl.mongodb.net/?retryWrites=true&w=majority',
+  { useNewUrlParser: true,
+    useUnifiedTopology: true })
+  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 app.use(express.json());
 
@@ -11,27 +20,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/api/books', (req, res, next) => {
-    const books = [
-      {
-        userId : 'oeihfzeomoihi',
-        title : 'Hunger Games',
-        author : 'Suzanne Collins',
-        imageUrl : 'https://www.ecranlarge.com/uploads/image/001/165/hunger-games-affiche-francaise-1165297.jpg',
-        year: 2015,
-        genre: 'Fiction',
-        ratings : [
-            {
-            userId : 'oeihfzeomoihi',
-            grade : 5,
-            }
-            ],
-            averageRating : 4,
-      },
-      
-    ];
-    res.status(200).json(books);
-});
-
+app.use('/api/books', bookRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
