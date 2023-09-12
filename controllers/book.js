@@ -80,3 +80,28 @@ exports.getOneBook = (req, res, next) => {
       .catch(error => res.status(404).json({ error }));
 }
 
+exports.addRating = (req, res) => {
+  Book.findOne({ _id: req.params.id })
+    .then(book => {
+        book.ratings.push({
+          userId: req.auth.userId,
+          grade: req.body.rating
+        });
+        let totalRating = 0;
+        for (let i = 0; i < book.ratings.length; i++) {
+          let currentRating = book.ratings[i].grade;
+          totalRating += currentRating;
+        }
+        book.averageRating = totalRating / book.ratings.length;
+        console.log(book.averageRating)
+        return book.save();
+    })
+    .then(book => {
+      console.log('Livre noté:', book);
+      res.status(201).json(book);
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json({ error: 'try again loser' });
+    });
+}; 
