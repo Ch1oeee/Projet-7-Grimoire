@@ -87,7 +87,7 @@ exports.getOneBook = (req, res, next) => {
       .catch(error => res.status(404).json({ error }));
 }
 
-exports.addRating = (req, res) => {
+exports.addRating = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
     .then(book => {
         book.ratings.push({
@@ -99,7 +99,7 @@ exports.addRating = (req, res) => {
           let currentRating = book.ratings[i].grade;
           totalRating += currentRating;
         }
-        book.averageRating = totalRating / book.ratings.length;
+        book.averageRating = (totalRating / book.ratings.length).toFixed(1);
         console.log(book.averageRating)
         return book.save();
     })
